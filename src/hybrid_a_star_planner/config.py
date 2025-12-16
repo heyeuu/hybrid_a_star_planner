@@ -1,5 +1,3 @@
-# hybrid_a_star/config.py
-
 import math
 
 
