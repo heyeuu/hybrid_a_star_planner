@@ -31,8 +31,8 @@ def reeds_shepp_expansion(
     current_node: HybridAStarNode, goal_node: HybridAStarNode, map_params: MapParameters
 ) -> Optional[HybridAStarNode]:
     """
-    尝试从当前节点到目标节点找到一条 Reeds-Shepp 路径作为启发式或最终路径。
-    返回找到的路径节点，如果没有找到或有碰撞则返回 None。
+    尝试从当前节点到目标节点找到一条 Reeds-Shepp 路径作为启发式或最终路径,
+    返回找到的路径节点, 如果没有找到或有碰撞则返回 None.
     """
     from .collision_check import check_collision
 
@@ -60,12 +60,10 @@ def reeds_shepp_expansion(
 
     # 4. 按成本排序所有路径
     cost_queue = heapdict()
-    path_costs = {}
     for path in rs_paths:
         # 仅使用增量成本进行排序
         cost = calculate_reeds_shepp_cost(current_node, path)
         cost_queue[path] = cost
-        path_costs[path] = cost
 
     # 5. 检查成本最低且无碰撞的路径
     while cost_queue:
@@ -78,13 +76,12 @@ def reeds_shepp_expansion(
 
         if not check_collision(traj, map_params):
             # 找到一条有效的路径
-            final_cost = path_costs[rs_path]
 
             return HybridAStarNode(
                 grid_index=goal_node.grid_index,
                 traj=traj,
                 steering_angle=0.0,  # Reeds-Shepp 路径本身不代表单个动作
-                direction=1,  # 不重要，因为它是一个最终路径
+                direction=1,  # 不重要, 因为它是一个最终路径
                 cost=final_cost,
                 parent_index=current_node.index,
             )
