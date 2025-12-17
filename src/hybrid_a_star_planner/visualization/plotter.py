@@ -1,5 +1,8 @@
 import math
 import numpy as np
+import matplotlib
+
+matplotlib.use("qtagg")
 import matplotlib.pyplot as plt
 from typing import List
 from ..config import CarConfig

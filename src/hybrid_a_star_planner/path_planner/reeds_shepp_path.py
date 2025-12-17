@@ -1,5 +1,3 @@
-# hybrid_a_star/path_planner/reeds_shepp_path.py
-
 import math
 from typing import Optional
 from heapdict import heapdict

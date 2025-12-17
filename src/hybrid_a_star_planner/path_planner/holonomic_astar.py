@@ -92,9 +92,8 @@ def calculate_holonomic_cost_with_obstacles(
 
     while priority_queue:
         cost, current_index = heapq.heappop(priority_queue)
-        current_node = open_set.pop(current_index)
-
-        if current_index in closed_set:
+        current_node = open_set.pop(current_index, None)
+        if current_node is None or current_index in closed_set:
             continue
 
         closed_set[current_index] = current_node
