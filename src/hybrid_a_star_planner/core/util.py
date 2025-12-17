@@ -17,10 +17,12 @@ def get_hybrid_grid_index(x: float, y: float, yaw: float) -> Tuple[int, int, int
     return (x_idx, y_idx, yaw_idx)
 
 
-def get_holonomic_grid_index(x: float, y: float) -> Tuple[int, int]:
+def get_holonomic_grid_index(
+    x: float, y: float, xy_resolution: float
+) -> Tuple[int, int]:
     """计算 Holonomic A* 节点的栅格索引 (x, y)"""
-    x_idx = round(x / AlgorithmConfig.XY_RESOLUTION)
-    y_idx = round(y / AlgorithmConfig.XY_RESOLUTION)
+    x_idx = round(x / xy_resolution)
+    y_idx = round(y / xy_resolution)
     return (x_idx, y_idx)
 
 
