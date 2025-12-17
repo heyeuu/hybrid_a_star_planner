@@ -24,7 +24,7 @@ def main():
 
     # 4. 运行 Hybrid A*
     # 启用 plot_enabled=True 可以看到搜索过程中的中间路径
-    result = run_hybrid_a_star(start_state, goal_state, map_params, plot_enabled=True)
+    result = run_hybrid_a_star(start_state, goal_state, map_params, plot_enabled=False)
 
     if result:
         x_path, y_path, yaw_path, closed_set = result

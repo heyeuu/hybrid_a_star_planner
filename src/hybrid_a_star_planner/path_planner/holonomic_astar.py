@@ -72,7 +72,7 @@ def calculate_holonomic_cost_with_obstacles(
     goal_node: HybridAStarNode, map_params: MapParameters
 ) -> np.ndarray:
     """
-    使用 Dijkstra/A* (反向搜索) 计算 Holonomic 启发式成本矩阵。
+    使用 Dijkstra (反向搜索) 计算 Holonomic 启发式成本矩阵。
     结果是每个 (x, y) 栅格到终点的最短路径成本。
     """
     # 1. 初始化
