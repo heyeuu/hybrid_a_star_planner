@@ -10,8 +10,9 @@ requires-python = ">=3.13"
 dependencies = [
     "numpy (>=2.3.5,<3.0.0)",
     "scipy (>=1.16.3,<2.0.0)",
-    "rsplan (>=1.0.10,<2.0.0)",
-    "matplotlib (>=3.10.8,<4.0.0)"
+    "matplotlib (>=3.10.8,<4.0.0)",
+    "heapdict (>=1.0.1,<2.0.0)",
+    "curves-generator @ git+ssh://git@github.com/heyeuu/CurvesGenerator.git"
 ]
 
 [tool.poetry]
