@@ -12,7 +12,8 @@ dependencies = [
     "scipy (>=1.16.3,<2.0.0)",
     "matplotlib (>=3.10.8,<4.0.0)",
     "heapdict (>=1.0.1,<2.0.0)",
-    "curves-generator @ git+ssh://git@github.com/heyeuu/CurvesGenerator.git"
+    "curves-generator @ git+ssh://git@github.com/heyeuu/CurvesGenerator.git",
+    "pyqt6 (>=6.10.1,<7.0.0)",
 ]
 
 [tool.poetry]
