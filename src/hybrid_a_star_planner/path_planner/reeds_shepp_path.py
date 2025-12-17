@@ -40,12 +40,19 @@ def reeds_shepp_expansion(
     start_x, start_y, start_yaw = current_node.x, current_node.y, current_node.yaw
     goal_x, goal_y, goal_yaw = goal_node.x, goal_node.y, goal_node.yaw
 
-    # 2. 计算最小转向半径 (R = L / tan(max_steer))
-    radius = CarConfig.WHEEL_BASE / math.tan(CarConfig.MAX_STEER_ANGLE)
+    # 2. 计算最大曲率 (kappa = tan(max_steer) / L)
+    max_curvature = math.tan(CarConfig.MAX_STEER_ANGLE) / CarConfig.WHEEL_BASE
 
     # 3. 查找所有可能的 Reeds-Shepp 路径
     rs_paths = rsCurve.calc_all_paths(
-        start_x, start_y, start_yaw, goal_x, goal_y, goal_yaw, radius, step_size=0.1
+        start_x,
+        start_y,
+        start_yaw,
+        goal_x,
+        goal_y,
+        goal_yaw,
+        max_curvature,
+        step_size=0.1,
     )
 
     if not rs_paths:

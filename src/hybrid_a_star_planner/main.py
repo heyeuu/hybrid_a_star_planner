@@ -8,8 +8,8 @@ from .visualization.plotter import plot_final_path
 
 def main():
     # 1. 设置起点和终点
-    start_state = [10.0, 10.0, np.deg2rad(90.0)]
-    goal_state = [30.0, 45.0, np.deg2rad(0.0)]
+    start_state = [15.0, 10.0, np.deg2rad(90.0)]
+    goal_state = [43.0, 35.0, np.deg2rad(0.0)]
 
     # 2. 获取障碍物地图数据
     obstacle_x, obstacle_y = create_sample_map()
@@ -24,7 +24,7 @@ def main():
 
     # 4. 运行 Hybrid A*
     # 启用 plot_enabled=True 可以看到搜索过程中的中间路径
-    result = run_hybrid_a_star(start_state, goal_state, map_params, plot_enabled=False)
+    result = run_hybrid_a_star(start_state, goal_state, map_params, plot_enabled=True)
 
     if result:
         x_path, y_path, yaw_path, closed_set = result

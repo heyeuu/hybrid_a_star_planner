@@ -73,13 +73,14 @@ def kinematic_simulation_node(
 
     if not new_traj:
         return None  # 模拟失败
+    segment_traj = [current_node.traj[-1]] + new_traj
 
     # 2. 检查有效性 (边界和碰撞)
-    last_x, last_y, last_yaw = new_traj[-1]
+    last_x, last_y, last_yaw = segment_traj[-1]
     grid_index = get_hybrid_grid_index(last_x, last_y, last_yaw)
 
     # 检查是否在地图边界内且无碰撞
-    if not is_valid(new_traj, grid_index, map_params):
+    if not is_valid(segment_traj, grid_index, map_params):
         return None
 
     # 3. 计算成本
@@ -90,7 +91,7 @@ def kinematic_simulation_node(
     # 4. 创建新节点
     return HybridAStarNode(
         grid_index=grid_index,
-        traj=current_node.traj + new_traj,  # 将新轨迹添加到节点中
+        traj=segment_traj,
         steering_angle=steer_angle,
         direction=direction,
         cost=current_node.cost + cost,  # 总成本
