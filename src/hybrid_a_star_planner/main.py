@@ -27,7 +27,7 @@ def main():
     result = run_hybrid_a_star(start_state, goal_state, map_params, plot_enabled=False)
 
     if result:
-        x_path, y_path, yaw_path, closed_set = result
+        x_path, y_path, yaw_path, _closed_set = result
 
         # 5. 可视化最终结果
         plot_final_path(x_path, y_path, yaw_path, map_params)
