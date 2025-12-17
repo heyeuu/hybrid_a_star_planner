@@ -76,7 +76,9 @@ def calculate_holonomic_cost_with_obstacles(
     结果是每个 (x, y) 栅格到终点的最短路径成本。
     """
     # 1. 初始化
-    goal_x_idx, goal_y_idx = get_holonomic_grid_index(goal_node.x, goal_node.y)
+    goal_x_idx, goal_y_idx = get_holonomic_grid_index(
+        goal_node.x, goal_node.y, map_params.xy_resolution
+    )
     start_node = HolonomicNode((goal_x_idx, goal_y_idx), 0.0, (goal_x_idx, goal_y_idx))
 
     # 2. 创建障碍物地图和动作集
