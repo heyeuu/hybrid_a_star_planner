@@ -60,13 +60,16 @@ def reeds_shepp_expansion(
 
     # 4. 按成本排序所有路径
     cost_queue = heapdict()
+    path_costs = {}
     for path in rs_paths:
         # 仅使用增量成本进行排序
-        cost_queue[path] = calculate_reeds_shepp_cost(current_node, path)
+        cost = calculate_reeds_shepp_cost(current_node, path)
+        cost_queue[path] = cost
+        path_costs[path] = cost
 
     # 5. 检查成本最低且无碰撞的路径
     while cost_queue:
-        rs_path = cost_queue.popitem()[0]
+        rs_path, final_cost = cost_queue.popitem()
 
         # 将 Reeds-Shepp 路径转换为轨迹格式
         traj = [
@@ -75,7 +78,7 @@ def reeds_shepp_expansion(
 
         if not check_collision(traj, map_params):
             # 找到一条有效的路径
-            final_cost = calculate_reeds_shepp_cost(current_node, rs_path)
+            final_cost = path_costs[rs_path]
 
             return HybridAStarNode(
                 grid_index=goal_node.grid_index,
