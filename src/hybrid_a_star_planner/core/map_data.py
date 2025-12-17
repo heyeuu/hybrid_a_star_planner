@@ -71,7 +71,7 @@ def calculate_map_parameters(
 
 
 def create_sample_map() -> Tuple[List[float], List[float]]:
-    """生成示例地图障碍物坐标（原代码中的 map 函数）"""
+    """生成示例地图障碍物坐标"""
     obstacle_x, obstacle_y = [], []
 
     # 边界
