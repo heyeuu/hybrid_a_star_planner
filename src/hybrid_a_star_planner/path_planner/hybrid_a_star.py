@@ -48,6 +48,19 @@ def run_hybrid_a_star(
     )
     print("Holonomic Heuristics calculated.")
 
+    def get_h_cost(x_idx: int, y_idx: int) -> float:
+        """根据地图偏移获取 Holonomic 启发式成本"""
+        rel_x = x_idx - map_params.map_min_x
+        rel_y = y_idx - map_params.map_min_y
+        if (
+            rel_x < 0
+            or rel_y < 0
+            or rel_x >= holonomic_heuristics.shape[0]
+            or rel_y >= holonomic_heuristics.shape[1]
+        ):
+            return float("inf")
+        return holonomic_heuristics[rel_x, rel_y]
+
     # 3. Hybrid A* 搜索
     open_set: Dict[Tuple[int, int, int], HybridAStarNode] = {
         start_node.index: start_node
@@ -56,9 +69,7 @@ def run_hybrid_a_star(
     cost_queue = heapdict()
 
     # H = max(G_nonholonomic, H_holonomic * CostConfig.HYBRID_COST_WEIGHT)
-    start_h_cost = holonomic_heuristics[
-        start_node.grid_index[0], start_node.grid_index[1]
-    ]
+    start_h_cost = get_h_cost(start_node.grid_index[0], start_node.grid_index[1])
     cost_queue[start_node.index] = (
         start_node.cost + CostConfig.HYBRID_COST_WEIGHT * start_h_cost
     )
@@ -101,9 +112,7 @@ def run_hybrid_a_star(
                 continue
 
             # 计算 F-Cost
-            h_cost_grid = holonomic_heuristics[
-                new_node.grid_index[0], new_node.grid_index[1]
-            ]
+            h_cost_grid = get_h_cost(new_node.grid_index[0], new_node.grid_index[1])
             f_cost = new_node.cost + CostConfig.HYBRID_COST_WEIGHT * h_cost_grid
 
             if (

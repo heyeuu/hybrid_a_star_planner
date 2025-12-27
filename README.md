@@ -32,6 +32,18 @@
 - 结构清晰，便于替换车辆模型与参数
 - Reeds-Shepp 终点扩展提升收敛效率
 
+## demo
+<p align="center">
+  <video src="https://work.heyeuuu19.com/course/AI/demo_720p.mp4" 
+         autoplay 
+         loop 
+         muted 
+         playsinline 
+         width="800" 
+         style="border-radius: 8px; border: 1px solid #ddd;">
+  </video>
+</p>
+
 ## 学习路径
 
 建议按以下顺序阅读源码：

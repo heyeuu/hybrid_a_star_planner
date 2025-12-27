@@ -21,22 +21,23 @@ def create_holonomic_obstacle_map(map_params: MapParameters) -> np.ndarray:
     根据障碍物坐标和分辨率创建 Holonomic A* 的栅格地图。
     地图边界由 map_params 决定。
     """
-    # 计算地图的尺寸
-    max_x_idx = map_params.map_max_x
-    max_y_idx = map_params.map_max_y
-
-    # 初始化为 False (无障碍物)
-    obstacle_map = np.full((max_x_idx + 1, max_y_idx + 1), False)
+    # 使用边界范围而不是绝对坐标大小，避免创建过大的稠密矩阵
+    width = map_params.map_max_x - map_params.map_min_x + 1
+    height = map_params.map_max_y - map_params.map_min_y + 1
+    obstacle_map = np.full((width, height), False)
 
     # 将障碍物点映射到栅格并标记为 True
     for obs_x, obs_y in zip(map_params.obstacle_x, map_params.obstacle_y):
         x_idx = int(round(obs_x / map_params.xy_resolution))
         y_idx = int(round(obs_y / map_params.xy_resolution))
 
+        # 将绝对索引转换为相对索引以写入数组
+        rel_x = x_idx - map_params.map_min_x
+        rel_y = y_idx - map_params.map_min_y
+
         # 确保索引在范围内
-        if 0 <= x_idx <= max_x_idx and 0 <= y_idx <= max_y_idx:
-            # 简单地将障碍物点所在的栅格标记为障碍物
-            obstacle_map[x_idx, y_idx] = True
+        if 0 <= rel_x < width and 0 <= rel_y < height:
+            obstacle_map[rel_x, rel_y] = True
 
     return obstacle_map
 
@@ -56,13 +57,16 @@ def is_holonomic_node_valid(
     ):
         return False
 
-    # 检查障碍物,还需要处理障碍物地图的索引范围
-    map_max_x_idx, map_max_y_idx = obstacle_map.shape
-    if 0 <= x_idx < map_max_x_idx and 0 <= y_idx < map_max_y_idx:
-        if obstacle_map[x_idx, y_idx]:
+    # 计算相对索引以访问障碍物矩阵
+    rel_x = x_idx - map_params.map_min_x
+    rel_y = y_idx - map_params.map_min_y
+    map_width, map_height = obstacle_map.shape
+
+    if 0 <= rel_x < map_width and 0 <= rel_y < map_height:
+        if obstacle_map[rel_x, rel_y]:
             return False
     else:
-        # 索引超出障碍物地图的实际计算范围
+        # 超出矩阵范围
         return False
 
     return True
@@ -124,12 +128,15 @@ def calculate_holonomic_cost_with_obstacles(
                 heapq.heappush(priority_queue, (neighbor_cost, neighbor_index))
 
     # 4. 提取启发式成本矩阵
-    max_x_idx, max_y_idx = obstacle_map.shape
-    holonomic_cost_matrix = np.full((max_x_idx, max_y_idx), np.inf)
+    map_width, map_height = obstacle_map.shape
+    holonomic_cost_matrix = np.full((map_width, map_height), np.inf)
 
     for node in closed_set.values():
         x_idx, y_idx = node.grid_index
-        if 0 <= x_idx < max_x_idx and 0 <= y_idx < max_y_idx:
-            holonomic_cost_matrix[x_idx, y_idx] = node.cost
+        rel_x = x_idx - map_params.map_min_x
+        rel_y = y_idx - map_params.map_min_y
+
+        if 0 <= rel_x < map_width and 0 <= rel_y < map_height:
+            holonomic_cost_matrix[rel_x, rel_y] = node.cost
 
     return holonomic_cost_matrix

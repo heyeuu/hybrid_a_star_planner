@@ -82,8 +82,8 @@ def plot_final_path(
         plt.arrow(
             x_path[k],
             y_path[k],
-            1 * math.cos(yaw_path[k]),
-            1 * math.sin(yaw_path[k]),
+            -math.cos(yaw_path[k]),
+            -math.sin(yaw_path[k]),
             width=0.1,
             head_width=0.3,
             color="b",
