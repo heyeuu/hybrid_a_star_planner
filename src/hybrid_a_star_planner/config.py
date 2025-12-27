@@ -4,7 +4,7 @@ import math
 class CarConfig:
     """车辆运动学和尺寸参数"""
 
-    MAX_STEER_ANGLE = 0.6  # 最大转向角 (rad)
+    MAX_STEER_ANGLE = 0.75  # 最大转向角 (rad)；增大转角以减小最小转弯半径
     STEER_PRECISION = 10  # 转向角离散化数量 (单侧)
     WHEEL_BASE = 3.5  # 轴距 (m)
     AXLE_TO_FRONT = 4.5  # 后轴到前边缘 (m)

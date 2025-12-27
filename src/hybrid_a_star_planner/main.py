@@ -8,8 +8,8 @@ from .visualization.plotter import plot_final_path
 
 def main():
     # 1. 设置起点和终点
-    start_state = [15.0, 10.0, np.deg2rad(90.0)]
-    goal_state = [43.0, 35.0, np.deg2rad(0.0)]
+    start_state = [15.0, 10.0, np.deg2rad(0.0)]
+    goal_state = [45.0, 35.0, np.deg2rad(90.0)]
 
     # 2. 获取障碍物地图数据
     obstacle_x, obstacle_y = create_sample_map()
