@@ -34,7 +34,7 @@
 
 ## demo
 <div align="center">
-  <video src="https://work.heyeuuu19.com/demo_optimized.mp4" muted autoplay loop playsinline width="100%"></video>
+  <video src="https://work.heyeuuu19.com/course/AI/demo_720p.mp4" muted autoplay loop playsinline width="100%"></video>
 </div>
 ## 学习路径
 
