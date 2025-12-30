@@ -45,6 +45,31 @@ def draw_car(x: float, y: float, yaw: float, color: str = "black", ax=None):
 
     ax.plot(car[0, :], car[1, :], color)
 
+def plot_dynamic_obstacles(dynamic_obstacles, total_time, dt=1.0, color='r', label_prefix='DynObs'):
+    """
+    绘制动态障碍物的运动轨迹
+    :param dynamic_obstacles: 动态障碍物列表
+    :param total_time: 轨迹总时长
+    :param dt: 采样时间间隔
+    :param color: 轨迹颜色
+    :param label_prefix: 图例前缀
+    """
+    t_list = np.arange(0, total_time, dt)
+    for idx, obs in enumerate(dynamic_obstacles):
+        traj_x, traj_y = [], []
+        for t in t_list:
+            x, y = obs.get_position(t)
+            traj_x.append(x)
+            traj_y.append(y)
+        plt.plot(traj_x, traj_y, color=color, linestyle='--', linewidth=1.2, label=f"{label_prefix}{idx+1}")
+        # 可选：绘制障碍物当前位置
+        plt.scatter(traj_x[-1], traj_y[-1], color=color, marker='o')
+
+    # 避免重复图例
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys())
+
 
 def plot_final_path(
     x_path: List[float],
@@ -53,28 +78,25 @@ def plot_final_path(
     map_params: MapParameters,
     title: str = "Hybrid A* Path Planning",
 ):
-    """绘制最终路径和动画效果"""
     plt.figure(figsize=(10, 10))
 
-    # 绘制障碍物
-    plt.plot(map_params.obstacle_x, map_params.obstacle_y, "sk", label="Obstacles")
+    # 预先计算障碍物轨迹长度
+    path_len = len(x_path)
+    t_list = np.arange(0, path_len, 1)
 
-    # 设置图表限制
-    plt.xlim(min(map_params.obstacle_x) - 5, max(map_params.obstacle_x) + 5)
-    plt.ylim(min(map_params.obstacle_y) - 5, max(map_params.obstacle_y) + 5)
-    plt.title(title)
-    plt.xlabel("X [m]")
-    plt.ylabel("Y [m]")
-    plt.grid(True)
-
-    # 绘制完整路径
-    plt.plot(x_path, y_path, linewidth=1.5, color="r", zorder=0, label="Final Path")
-
-    # 动画展示车辆行驶
-    for k in range(0, len(x_path), 5):  # 每隔5个点绘制一次，减少绘图开销
+    for k in range(0, path_len, 1):  # 每个点都绘制，动画更流畅
         plt.cla()
-        plt.plot(map_params.obstacle_x, map_params.obstacle_y, "sk")
-        plt.plot(x_path, y_path, linewidth=1.5, color="r", zorder=0)
+        plt.plot(map_params.obstacle_x, map_params.obstacle_y, "sk", label="Obstacles")
+
+        # 动态障碍物当前位置
+        if hasattr(map_params, "dynamic_obstacles") and map_params.dynamic_obstacles:
+            for idx, obs in enumerate(map_params.dynamic_obstacles):
+                # 只显示当前位置
+                x_dyn, y_dyn = obs.get_position(t_list[k])
+                plt.scatter(x_dyn, y_dyn, color="b", marker="o", label=f"DynamicObs{idx+1}" if k == 0 else "")
+
+        # 绘制已生成的路径
+        plt.plot(x_path[:k+1], y_path[:k+1], linewidth=1.5, color="r", zorder=0, label="Final Path" if k == 0 else "")
 
         draw_car(x_path[k], y_path[k], yaw_path[k])
 
@@ -93,6 +115,12 @@ def plot_final_path(
         plt.ylim(min(map_params.obstacle_y) - 5, max(map_params.obstacle_y) + 5)
         plt.title(f"{title} (Step {k})")
 
-        plt.pause(0.001)
+        # 避免重复图例
+        handles, labels = plt.gca().get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        if k == 0:
+            plt.legend(by_label.values(), by_label.keys())
+
+        plt.pause(0.02)
 
     plt.show()

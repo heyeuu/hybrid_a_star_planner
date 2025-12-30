@@ -1,6 +1,7 @@
 from typing import Tuple, List, Optional, Dict
 from heapdict import heapdict
 import matplotlib.pyplot as plt
+import numpy as np
 
 from ..config import CostConfig
 from ..core.node import HybridAStarNode
@@ -9,6 +10,7 @@ from ..core.util import get_hybrid_grid_index
 from .kinematics import generate_motion_commands, kinematic_simulation_node
 from .reeds_shepp_path import reeds_shepp_expansion
 from .holonomic_astar import calculate_holonomic_cost_with_obstacles
+from .collision_check import  is_collision_with_dynamic_obstacles
 
 
 def run_hybrid_a_star(
@@ -48,8 +50,8 @@ def run_hybrid_a_star(
     )
     print("Holonomic Heuristics calculated.")
 
-    def get_h_cost(x_idx: int, y_idx: int) -> float:
-        """根据地图偏移获取 Holonomic 启发式成本"""
+    def get_h_cost(x_idx: int, y_idx: int,g_cost: float = 0.0) -> float:
+        """根据地图偏移获取 Holonomic 启发式成本，并考虑动态障碍物影响"""
         rel_x = x_idx - map_params.map_min_x
         rel_y = y_idx - map_params.map_min_y
         if (
@@ -59,7 +61,20 @@ def run_hybrid_a_star(
             or rel_y >= holonomic_heuristics.shape[1]
         ):
             return float("inf")
-        return holonomic_heuristics[rel_x, rel_y]
+        h_cost = holonomic_heuristics[rel_x, rel_y]
+
+        # ==== 动态障碍物惩罚 ====
+        # 预测到达该点的时间（可用g_cost近似）
+        t = g_cost
+        penalty = 0.0
+        for obs in getattr(map_params, "dynamic_obstacles", []):
+            obs_x, obs_y = obs.get_position(t)
+            dist = np.hypot(x_idx - obs_x, y_idx - obs_y)
+            if dist < 0.5:  # 0.5为安全距离阈值，可调整
+                penalty += (0.5 - dist) * 10.0  # 距离越近惩罚越大
+        return h_cost + penalty
+        # return holonomic_heuristics[rel_x, rel_y]
+
 
     # 3. Hybrid A* 搜索
     open_set: Dict[Tuple[int, int, int], HybridAStarNode] = {
@@ -87,10 +102,17 @@ def run_hybrid_a_star(
             # 尝试 Reeds-Shepp 扩展
             rs_node = reeds_shepp_expansion(current_node, goal_node, map_params)
             if rs_node:
-                final_node = rs_node
-                closed_set[rs_node.index] = rs_node
-                print(f"Path Found via Reeds-Shepp! Cost: {rs_node.cost}")
-                break
+                # 检查Reeds-Shepp路径是否与动态障碍物发生碰撞
+                if is_collision_with_dynamic_obstacles(
+                    rs_node.traj, map_params, start_time=rs_node.cost - len(rs_node.traj) + 1, dt=1.0
+                ):
+                    # 有碰撞，不能直接break，继续常规扩展
+                    pass
+                else:
+                    final_node = rs_node
+                    closed_set[rs_node.index] = rs_node
+                    print(f"Path Found via Reeds-Shepp! Cost: {rs_node.cost}")
+                    break
 
         # 5. 运动学扩展
         for motion_command in motion_commands:
@@ -99,6 +121,14 @@ def run_hybrid_a_star(
             )
 
             if new_node is None:
+                continue
+            
+            # 动态障碍物时空碰撞检测
+            # 假设 new_node.traj 为 [(x, y, yaw), ...]，每步间隔 dt=1.0，可根据实际调整
+            # 这里用 new_node.cost 近似为时间戳（如每步cost=1），可根据实际模型调整
+            if is_collision_with_dynamic_obstacles(
+                new_node.traj, map_params, start_time=new_node.cost - len(new_node.traj) + 1, dt=0.2
+            ):
                 continue
 
             # 绘制中间路径 (如果启用)
@@ -112,7 +142,7 @@ def run_hybrid_a_star(
                 continue
 
             # 计算 F-Cost
-            h_cost_grid = get_h_cost(new_node.grid_index[0], new_node.grid_index[1])
+            h_cost_grid = get_h_cost(new_node.grid_index[0], new_node.grid_index[1], g_cost=new_node.cost)
             f_cost = new_node.cost + CostConfig.HYBRID_COST_WEIGHT * h_cost_grid
 
             if (
