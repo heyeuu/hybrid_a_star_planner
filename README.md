@@ -34,10 +34,9 @@
 - Reeds-Shepp 终点扩展提升收敛效率
 
 ## demo
-静态障碍物场景演示视频   
-https://work.heyeuuu19.com/course/AI/demo_720p.mp4  
-融合动态障碍物场景演示视频   
-https://www.flexclip.com/cn/share/14983932VOKJsqSJcIcUFNmxWEvLaaB055g3HVpG.html
+静态障碍物场景演示视频：[静态障碍物演示视频](https://work.heyeuuu19.com/course/AI/demo_720p.mp4)   
+融合动态障碍物场景演示视频：[动态障碍物演示视频](https://www.flexclip.com/cn/share/14983932VOKJsqSJcIcUFNmxWEvLaaB055g3HVpG.html)
+
 ## 学习路径
 
 建议按以下顺序阅读源码：

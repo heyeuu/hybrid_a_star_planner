@@ -69,7 +69,13 @@ def run_hybrid_a_star(
         penalty = 0.0
         for obs in getattr(map_params, "dynamic_obstacles", []):
             obs_x, obs_y = obs.get_position(t)
-            dist = np.hypot(x_idx - obs_x, y_idx - obs_y)
+            #dist = np.hypot(x_idx - obs_x, y_idx - obs_y)
+            # 将栅格索引转换为世界坐标          
+            world_x = x_idx * map_params.xy_resolution
+            world_y = y_idx * map_params.xy_resolution
+            dist = np.hypot(world_x - obs_x, world_y - obs_y)
+            if dist < 0.5:  # 0.5为安全距离阈值，可调整
+                 penalty += (0.5 - dist) * 10.0  # 距离越近惩罚越大
             if dist < 0.5:  # 0.5为安全距离阈值，可调整
                 penalty += (0.5 - dist) * 10.0  # 距离越近惩罚越大
         return h_cost + penalty
