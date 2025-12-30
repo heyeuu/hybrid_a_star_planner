@@ -131,7 +131,7 @@ def run_hybrid_a_star(
             # 假设 new_node.traj 为 [(x, y, yaw), ...]，每步间隔 dt=1.0，可根据实际调整
             # 这里用 new_node.cost 近似为时间戳（如每步cost=1），可根据实际模型调整
             if is_collision_with_dynamic_obstacles(
-                new_node.traj, map_params, start_time=new_node.cost - len(new_node.traj) + 1, dt=0.2
+                new_node.traj, map_params, start_time=new_node.cost - len(new_node.traj) + 1, dt=1.0
             ):
                 continue
 
