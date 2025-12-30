@@ -81,7 +81,7 @@ def is_collision_with_dynamic_obstacles(
         for obs in getattr(map_params, "dynamic_obstacles", []):
             obs_x, obs_y = obs.get_position(t)
             dist_sq = (x - obs_x) ** 2 + (y - obs_y) ** 2
-            if dist_sq < threshold ** 2.2:
+            if dist_sq < threshold ** 2:
                 return True
     return False
 
