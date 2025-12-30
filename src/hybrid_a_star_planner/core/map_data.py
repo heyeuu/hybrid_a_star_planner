@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import KDTree
-from typing import List, Tuple
+from typing import List, Tuple,Callable,Optional
 
 
 class MapParameters:
@@ -27,6 +27,34 @@ class MapParameters:
         self.obstacle_kdtree = obstacle_kdtree
         self.obstacle_x = obstacle_x
         self.obstacle_y = obstacle_y
+        self.dynamic_obstacles: List[DynamicObstacle] = []
+
+class DynamicObstacle:
+    """
+    动态障碍物，支持自定义轨迹函数
+    """
+    def __init__(
+        self,
+        init_pos: Tuple[float, float],
+        velocity: Tuple[float, float],
+        trajectory_func: Optional[Callable[[float], Tuple[float, float]]] = None
+    ):
+        self.init_pos = init_pos
+        self.velocity = velocity
+        self.trajectory_func = trajectory_func
+
+    def get_position(self, t: float) -> Tuple[float, float]:
+        """
+        获取障碍物在时间t的位置
+        """
+        if self.trajectory_func is not None:
+            return self.trajectory_func(t)
+        # 默认匀速直线运动
+        return (
+            self.init_pos[0] + self.velocity[0] * t,
+            self.init_pos[1] + self.velocity[1] * t
+        )
+
 
 
 def calculate_map_parameters(
