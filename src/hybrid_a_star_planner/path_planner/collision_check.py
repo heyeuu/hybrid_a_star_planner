@@ -86,7 +86,7 @@ def is_collision_with_dynamic_obstacles(
     return False
 
 def is_valid(
-    traj: List[List[float]], grid_index: Tuple[int, int, int], map_params: MapParameters,start_time: float = 0.0, dt: float = 1.0, threshold: float = 0.5
+    traj: List[List[float]], grid_index: Tuple[int, int, int], map_params: MapParameters,start_time: float = 0.0, dt: float = 1.0, threshold: float = 2.0
 ) -> bool:
     """检查节点是否有效：在地图边界内且无碰撞,（含动态障碍物）"""
     if not is_within_map_bounds(grid_index, map_params):
