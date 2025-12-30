@@ -75,8 +75,6 @@ def run_hybrid_a_star(
             world_y = y_idx * map_params.xy_resolution
             dist = np.hypot(world_x - obs_x, world_y - obs_y)
             if dist < 0.5:  # 0.5为安全距离阈值，可调整
-                 penalty += (0.5 - dist) * 10.0  # 距离越近惩罚越大
-            if dist < 0.5:  # 0.5为安全距离阈值，可调整
                 penalty += (0.5 - dist) * 10.0  # 距离越近惩罚越大
         return h_cost + penalty
         # return holonomic_heuristics[rel_x, rel_y]
